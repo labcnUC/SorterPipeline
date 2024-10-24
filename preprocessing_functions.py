@@ -25,8 +25,7 @@ def read_rhd(rhd_folder):
         print("No se encontraron archivos .rhd en la carpeta.")
         return None
     else:
-        print(f"Leyendo {rhd_files}")
-    recordings = [read_intan(file, stream_name='RHD2000 amplifier channel') for file in rhd_files]
+        recordings = [read_intan(file, stream_name='RHD2000 amplifier channel') for file in rhd_files]
     
     if len(recordings) > 1:
         recording = si.concatenate_recordings(recordings)
@@ -58,22 +57,25 @@ def get_recording(excel_file, probegroup_file):
 
             if recording is None:
                 continue
-            
+
             list_triggers, ms_before, ms_after = process_artifacts(row.artifacts, row.data_folder, fs)
 
             recording = prep.bandpass_filter(recording, freq_min=500., freq_max=9000.)
             recording = recording.set_probegroup(probegroup, group_mode='by_probe')
-            recording = prep.remove_artifacts(
-                recording=recording,
-                list_triggers=list_triggers,
-                mode="zeros"
-            )
+            if len(list_triggers) > 0:
+                recording = prep.remove_artifacts(
+                    recording=recording,
+                    list_triggers=list_triggers,
+                    mode="zeros"
+                )
             
             recordings.append(recording)
         
         if len(recordings) > 1:
             final_recording = si.concatenate_recordings(recordings)
-            print(f"Concatenados {len(recordings)} registros.")
+            print("Concatenados los siguientes registros:")
+            for i, rec in enumerate(recordings, 1):
+                print(f"Registro {i}: {rec}")
         elif recordings:
             final_recording = recordings[0]
             print("Solo un registro disponible para concatenar.")
@@ -107,8 +109,10 @@ def process_artifacts(artifacts, base_folder, fs):
     lan_file = [lan_file for lan_file in all_files if lan_file.startswith('LAN') and lan_file.endswith('500.mat')]
     
     if not lan_file:
-        raise FileNotFoundError("No se encontró ningún archivo LAN en el directorio especificado.")
-    
+        print("No se encontró ningún archivo LAN en el directorio especificado.")
+        print("\033[31mSe omite la remoción de artefactos\033[0m")
+        return [], [], []  # Retornar listas vacías y continuar
+        
     path_lan = os.path.join(base_folder, lan_file[0])
     print (path_lan)
     # Leer el archivo HDF5
@@ -148,7 +152,7 @@ def process_artifacts(artifacts, base_folder, fs):
 
         # Tiempos antes y después del artefacto
         ms_before = 0 #  zero before trigger
-        ms_after = 500 # 500 ms after trigger
+        ms_after = 500 # 500 ms after trigger <- punto para cambiar los segmentos que componen el artefacto.
         
     return list_triggers, ms_before, ms_after
     
