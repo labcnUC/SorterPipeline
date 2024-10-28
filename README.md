@@ -25,7 +25,7 @@ Este pipeline proporciona herramientas para el análisis de datos de *spike sort
 
 Sigue estos pasos para instalar el SorterPipeline:
 
-1. **Instala Anaconda**: Puedes descargarlo desde [Anaconda](https://www.anaconda.com/download).
+1. **Instala Anaconda**: Puedes descargarlo desde [Anaconda](https://www.anaconda.com/download). Recomendacion: Si no quieres utilizar el GUI, utiliza la version compacta "miniconda".
    
 2. **Verifica el controlador CUDA**: Ejecuta el siguiente comando en la terminal:
    ```bash
@@ -37,7 +37,7 @@ Si no lo tienes instalado, consulta [NVIDIA CUDA GPUs](https://developer.nvidia.
 
 4. Crea y activa un entorno nuevo:
    ```bash
-   conda create --name sorter python=3.x
+   conda create --name sorter python=3.12
    conda activate sorter
    ```
 
