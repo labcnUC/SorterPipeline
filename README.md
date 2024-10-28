@@ -60,7 +60,7 @@ Este paso es común para la instalación de Pytorch y puede ser utilizado para l
     ```bash
     cd SorterPipeline
     ```
-9. Instala las dependencias:
+9. Instala las dependencias (advertencia: Estas estan creadas para funcionar con CUDA 11.8)
     ```bash
     pip install -r requirements.txt
     ```
