@@ -33,43 +33,40 @@ Sigue estos pasos para instalar el SorterPipeline:
     ```
 Si no lo tienes instalado, consulta [NVIDIA CUDA GPUs](https://developer.nvidia.com/cuda-gpus#compute)
 
-3. Verifica la compatibilidad de PyTorch: Consulta las [notas de versión de PyTorch](https://github.com/pytorch/pytorch/blob/main/RELEASE.md) para asegurarte de que tu versión de CUDA sea compatible.
-
-4. Crea y activa un entorno nuevo:
-   ```bash
-   conda create --name sorter python=3.12
-   conda activate sorter
-   ```
-
-5. Instala PyTorch: Utiliza el siguiente enlace para instalar PyTorch: [Instalación de PyTorch](https://pytorch.org/get-started/locally/)
-
-6. Verifica la instalación: Inicia Python y ejecuta:
-
-    ```python
-    import torch
-    torch.cuda.is_available()
-    ```
-Este paso es común para la instalación de Pytorch y puede ser utilizado para la instalación de DeepLabCut y otros con requerimientos similares.
-
-7. Clona el repositorio:
+3. Clone el repositorio:
     ```bash
     git clone https://github.com/labcnUC/SorterPipeline.git
     ```
-
-8. Navega al directorio del pipeline:
+4. Navegue al directorio del pipeline ⛵:
     ```bash
     cd SorterPipeline
     ```
-9. Instala las dependencias (advertencia: Estas estan creadas para funcionar con CUDA 11.8)
+9. Cree el env de conda e instala las dependencias (advertencia: Estas estan creadas para funcionar con CUDA 11.8)
     ```bash
     conda env create -f environment.yml
     ```
+6. Verifique la instalación: Inicia Python y ejecuta:
+
+    ```python
+    import spikeinterface
+    import kilosort
+    import torch
+    torch.cuda.is_available()
+    ```
+🚨 Si ocurre un error, verifica la compatibilidad de PyTorch consultando las [notas de versión de PyTorch](https://github.com/pytorch/pytorch/blob/main/RELEASE.md)  para asegurarte de que tu versión de CUDA sea compatible. Instala PyTorch si es necesario utilizando el siguiente enlace: [Instalación de PyTorch](https://pytorch.org/get-started/locally/).  
+El funcionamiento correcto de CUDA y PyTorch es esencial tanto para DeepLabCut como para otras aplicaciones con requisitos similares.
+
 10. Ejecuta Jupyter Lab:
     ```bash
     jupyter lab
     ```
 # Uso
-Después de seguir los pasos de instalación, abre Jupyter Lab y carga el pipeline para comenzar a trabajar en el análisis de spike sorting.
+Después de seguir los pasos de instalación, abre Jupyter Lab y lea el notebook sh_sorterpipeline para comenzar a trabajar en el análisis de spike sorting.
+
+# Instalación de Phy.
+```python
+conda create -n phy2 -y python=3.11 cython dask h5py joblib matplotlib numpy pillow pip pyopengl pyqt pyqtwebengine pytest python qtconsole requests responses scikit-learn scipy traitlets
+```
 
 # Contribuciones
 Las contribuciones son bienvenidas. Si deseas contribuir, por favor sigue estos pasos:
