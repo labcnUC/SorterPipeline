@@ -62,7 +62,7 @@ Este paso es común para la instalación de Pytorch y puede ser utilizado para l
     ```
 9. Instala las dependencias (advertencia: Estas estan creadas para funcionar con CUDA 11.8)
     ```bash
-    pip install -r requirements.txt
+    conda env create -f environment.yml
     ```
 10. Ejecuta Jupyter Lab:
     ```bash
