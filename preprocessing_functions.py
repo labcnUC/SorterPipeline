@@ -93,7 +93,10 @@ def get_recording(excel_file, probegroup_file):
 def check_concatenation(record_maze, record_sleep):
     # Concatenar ambos registros
     if record_maze is not None and record_sleep is not None:
-        final_recording = si.concatenate_recordings([record_maze, record_sleep])
+        # se igualan los ID de Maze y sueño, para esto se copian los ID de maze y se renombran los de sueño
+        chan_ids=record_maze.get_channel_ids() 
+        newid_sleep=newid_sleep.rename_channels(chan_ids)
+        final_recording = si.concatenate_recordings([record_maze, newid_sleep])
         print("Registros de Maze y Sueño concatenados exitosamente.")
     else:
         final_recording = record_maze if record_maze is not None else record_sleep
