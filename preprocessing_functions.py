@@ -36,75 +36,95 @@ def read_rhd(rhd_folder):
     
     return recording
 
-
-def get_recording(excel_file, probegroup_file):
+def get_recording(file_data_folder, artifacts, probegroup_file):
+    """
+    Procesa y devuelve una grabación única a partir de una carpeta de datos y una configuración de artefactos.
+    
+    Args:
+        file_data_folder (str or Path): Ruta de la carpeta donde se encuentran los archivos RHD.
+        artifacts: Información sobre los artefactos a procesar (triggers, ms_before, ms_after).
+        probegroup_file (str or Path): Ruta del archivo que define el probegroup.
+    
+    Returns:
+        final_recording: Objeto de grabación procesado o None si no se pudo procesar.
+    """
     try:
-        df = pd.read_excel(Path(excel_file))
+        # Leer probegroup
         probegroup = pi.read_probeinterface(probegroup_file)
         
-        recordings = []
-        diferencias = []
+        # Leer la grabación desde la carpeta especificada
+        file_data_folder = Path(file_data_folder)
+        recording = read_rhd(file_data_folder)
         
-        for row in df.itertuples(index=False):
-            file_data_folder = Path(row.data_folder)
-            recording = read_rhd(file_data_folder)
+        # Verifica si se leyó correctamente la grabación
+        if recording is None:
+            print(f"No se pudo leer la grabación en {file_data_folder}.")
+            return None
 
-            # frecuencia de sampleo registro original.
-            
-            sn=recording.get_num_samples()
-            td=recording.get_total_duration()
-            fs = (int(sn/ td))
+        # Calcula la frecuencia de sampleo
+        num_samples = recording.get_num_samples()
+        total_duration = recording.get_total_duration()
+        fs = int(num_samples / total_duration)
 
-            if recording is None:
-                continue
-
-            list_triggers, ms_before, ms_after = process_artifacts(row.artifacts, row.data_folder, fs)
-
-            recording = prep.bandpass_filter(recording, freq_min=500., freq_max=9000.)
-            recording = recording.set_probegroup(probegroup, group_mode='by_probe')
-            if len(list_triggers) > 0:
-                recording = prep.remove_artifacts(
-                    recording=recording,
-                    list_triggers=list_triggers,
-                    mode="zeros"
-                )
-            
-            recordings.append(recording)
+        # Procesa artefactos
+        list_triggers, ms_before, ms_after = process_artifacts(artifacts, file_data_folder, fs)
+        #print(list_triggers)
         
-        if len(recordings) > 1:
-            final_recording = si.concatenate_recordings(recordings)
-            print("Concatenados los siguientes registros:")
-            for i, rec in enumerate(recordings, 1):
-                print(f"Registro {i}: {rec}")
-        elif recordings:
-            final_recording = recordings[0]
-            print("Solo un registro disponible para concatenar.")
-        else:
-            final_recording = None
-            print("No se procesaron registros.")
+        # Filtro pasa banda
+        recording = prep.bandpass_filter(recording, freq_min=500., freq_max=9000.)
+        recording = recording.set_probegroup(probegroup, group_mode='by_probe')
         
-        print("Procesamiento de archivos completado")
-        return final_recording
+        # Remueve artefactos si existen
+        if list_triggers is not None and len(list_triggers) > 0:
+            recording = prep.remove_artifacts(
+                recording=recording,
+                list_triggers=list_triggers,
+                ms_after = 500,
+                mode="zeros"
+            )
+        
+        print("Procesamiento de archivo completado.")
+        return recording
     
     except Exception as e:
         print(f"Error crítico en el procesamiento de archivos: {e}")
         return None
 
+
+import spikeinterface as si
+
 def check_concatenation(record_maze, record_sleep):
-    # Concatenar ambos registros
+    """
+    Concatenar los registros de Maze y Sueño después de igualar los IDs de canal.
+    
+    Args:
+        record_maze: Objeto de grabación del registro de Maze.
+        record_sleep: Objeto de grabación del registro de Sueño.
+    
+    Returns:
+        final_recording: Grabación concatenada o única disponible.
+    """
+    # Verifica que ambos registros estén disponibles
     if record_maze is not None and record_sleep is not None:
-        # se igualan los ID de Maze y sueño, para esto se copian los ID de maze y se renombran los de sueño
-        chan_ids=record_maze.get_channel_ids() 
-        newid_sleep=newid_sleep.rename_channels(chan_ids)
-        final_recording = si.concatenate_recordings([record_maze, newid_sleep])
+        # Igualar IDs de canales entre Maze y Sueño
+        chan_ids = record_maze.get_channel_ids()
+        
+        # Renombrar canales en record_sleep
+        record_sleep = record_sleep.rename_channels(chan_ids)
+        
+        # Concatenar grabaciones de Maze y Sueño
+        final_recording = si.concatenate_recordings([record_maze, record_sleep])
         print("Registros de Maze y Sueño concatenados exitosamente.")
     else:
+        # Si solo hay un registro, usarlo como final
         final_recording = record_maze if record_maze is not None else record_sleep
         if final_recording is not None:
             print("Solo un registro disponible para concatenar.")
         else:
             print("No hay registros disponibles para concatenar.")
+    
     return final_recording
+
 
 def process_artifacts(artifacts, base_folder, fs):
     # Listar todos los archivos en el folder base
