@@ -75,5 +75,5 @@ Incluye: filtro pasa banda, centrado, remoción de artefactos `LAN`, detección 
 
 ## 📄 Documentación adicional
 
-Ver el archivo [manual_get_recording2.md](manual_get_recording2.md) o su versión en PDF para una descripción completa del flujo.
+Ver el archivo [README_get_recording2.md](README_get_recording2.md) o su versión en PDF para una descripción completa del flujo.
 
