@@ -24,24 +24,26 @@ Este pipeline proporciona herramientas para el análisis de datos de *spike sort
 
 ## Instalación
 
-1. Clona el repositorio:
-    ```bash
-    git clone https://github.com/labcnUC/SorterPipeline.git
-    ```
 
-2. Navega al directorio:
+
+1. Navega al directorio:
     ```bash
     cd SorterPipeline
     ```
 
-3. Crea un nuevo entorno virtual:
+2. Crea un nuevo entorno virtual:
     ```bash
     conda create --name sorterpipeline python=3.10
     ```
 
-4. Activa el entorno:
+3. Activa el entorno:
     ```bash
     conda activate sorterpipeline
+    ```
+
+4. Clona el repositorio:
+    ```bash
+    git clone https://github.com/labcnUC/SorterPipeline.git
     ```
 
 5. Instala las dependencias:
@@ -50,6 +52,9 @@ Este pipeline proporciona herramientas para el análisis de datos de *spike sort
     ```
 
 6. Verifica la instalación:
+    ```bash
+    python
+    ```   
     ```python
     import spikeinterface
     import kilosort
@@ -64,7 +69,7 @@ Este pipeline proporciona herramientas para el análisis de datos de *spike sort
     jupyter lab
     ```
 
-2. Abre el archivo `sh_sorterpipeline.ipynb`.
+2. Abre el archivo `sorterpipeline_v2.ipynb`.
 
 3. Sigue las instrucciones para cargar datos, configurar el pipeline y ejecutar el análisis.
 
