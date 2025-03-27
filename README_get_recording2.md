@@ -53,12 +53,19 @@ Clasifica archivos en `Sleep`, `Maze`, o `Desconocido` según su nombre.
 ## 📁 Estructura esperada
 
 ```
+Escenario 1:
 📂 animal_folder/
 ├── recording1.rhd
 ├── recording2.rhd
 ├── LAN_recording1.mat
 ├── LAN_recording2.mat
-├── probegroup.json
+
+Escenario 2
+📂 animal_folder/
+├── recording1.rhd
+├── recording2.rhd
+├── recording3.rhd
+├── LAN_recording.mat
 ```
 
 ---
